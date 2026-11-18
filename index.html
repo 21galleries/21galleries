@@ -1040,6 +1040,7 @@ function setupGL(){
 }
 
 /* --- camera --- */
+const COARSE = window.matchMedia("(pointer: coarse)").matches;
 let quality = 1, slowFor = 0.016, frames = 0;      // quality steps down if frames keep arriving late
 function resize(){
   const coarse = window.matchMedia("(pointer: coarse)").matches;
@@ -1220,7 +1221,7 @@ function frame(t){
   if (raw > 0 && raw < 0.25) slowFor += (raw - slowFor)*0.08;
   // sharpness follows the computer: it steps down only if frames stay slow, and climbs back once they're quick again.
   // The first few seconds are skipped, because loading the films and photos always makes them slow.
-  if (++frames > 240 && frames % 45 === 0){
+  if (!COARSE && ++frames > 240 && frames % 45 === 0){      // phones were always smooth, so they keep full sharpness
     if (slowFor > 0.03 && quality > 0.6){ quality = Math.max(0.6, quality*0.88); slowFor = 0.022; }
     else if (slowFor < 0.019 && quality < 1){ quality = Math.min(1, quality/0.88); }
   }
@@ -1335,7 +1336,7 @@ function fail(){
 }
 async function init(){
   try {
-    const opts = { antialias: !window.matchMedia("(pointer: coarse)").matches,   // computers keep edge smoothing so far frames stay clean; phones skip it
+    const opts = { antialias: true,   // edge smoothing everywhere, so far frames stay clean
        alpha: false, powerPreference: "high-performance" };
     gl = canvas.getContext("webgl2", opts) || canvas.getContext("webgl", opts);
     if (!gl){ fail(); return; }
