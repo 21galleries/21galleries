@@ -237,6 +237,41 @@ dialog#buy{width:min(92vw,760px);background:var(--ink);box-shadow:inset 0 0 0 1p
 .buy-soon a{color:var(--paper);text-underline-offset:4px}
 .buy-close{display:block;margin-top:1.1rem;background:none;border:1px solid var(--paper);color:var(--paper);font-family:var(--serif);font-size:.95rem;padding:.4rem 1rem;cursor:pointer}
 @media (max-width:600px){ .buy-in{flex-direction:column} .buy-in img{width:min(60%,220px)} }
+
+/* ---------- the theater ---------- */
+.th-ui{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 1.4rem);background:rgba(8,8,8,.9);color:var(--paper);
+  padding:1rem 1.2rem;max-width:min(94vw,40rem);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.th-ui[hidden]{display:none}
+.th-ui p{margin:0 0 .6rem;font-size:1rem}
+.th-big{font-style:italic;font-size:1.35rem!important}
+.th-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center}
+.th-btn{font-family:var(--serif);font-size:1rem;font-weight:700;padding:.6rem 1.05rem;cursor:pointer;background:none;color:var(--paper);border:1px solid var(--paper)}
+.th-btn:hover{background:var(--paper);color:var(--ink)}
+.th-btn.th-main{background:var(--paper);color:var(--ink)}
+.th-btn.th-main:hover{background:var(--ink);color:var(--paper)}
+.th-btn.th-quiet{border-color:#6a6a6a;color:#cfcfcc}
+.th-btn:focus-visible,.th-arrow:focus-visible{outline:2px solid var(--paper);outline-offset:3px}
+.th-pick{display:flex;align-items:center;gap:.8rem;margin:0 0 .8rem}
+.th-arrow{flex:none;width:2.8rem;height:2.8rem;font-size:1.8rem;line-height:1;background:none;color:var(--paper);border:1px solid var(--paper);cursor:pointer;font-family:var(--serif)}
+.th-arrow:hover{background:var(--paper);color:var(--ink)}
+.th-now{flex:1;min-width:0;text-align:center}
+.th-now b{display:block;font-style:italic;font-weight:400;font-size:1.3rem;line-height:1.2}
+.th-now span{display:block;font-size:.9rem;color:#bdbdba;margin-top:.15rem}
+.th-turn{margin:.7rem 0 0!important;font-size:.9rem!important;color:#bdbdba}
+.th-ctrl{display:flex;gap:.5rem;padding:.6rem .7rem;background:rgba(8,8,8,.7)}
+.th-ctrl[hidden]{display:none}
+.th-link{display:inline-block;margin-top:.8rem;color:var(--paper);text-underline-offset:4px}
+.th-link[hidden]{display:none}
+.g3d.th-dark .g3d-top{opacity:0;pointer-events:none;transition:opacity 1.2s}
+.g3d.th-dark.th-poke .g3d-top{opacity:1;pointer-events:auto}
+.g3d-top{transition:opacity .6s}
+@media (max-width:520px){
+  .th-ui{padding:.75rem .8rem;width:calc(100vw - 1.6rem)}
+  .th-btn{padding:.5rem .8rem;font-size:.95rem}
+  .th-arrow{width:2.4rem;height:2.4rem;font-size:1.5rem}
+  .th-now b{font-size:1.15rem}.th-now span{font-size:.8rem}
+  .th-turn{font-size:.8rem!important}
+}
 </style>
 </head>
 <body>
@@ -248,6 +283,28 @@ dialog#buy{width:min(92vw,760px);background:var(--ink);box-shadow:inset 0 0 0 1p
   <div class="g3d-hint" id="g3dHint">Push the stick to walk. Drag to look around. Tap a piece to walk up to it.</div>
   <div class="g3d-stick" id="g3dStick" aria-hidden="true"><div class="g3d-knob" id="g3dKnob"></div></div>
   <button type="button" class="g3d-chip right" id="g3dChip" hidden></button>
+  <div class="th-ui th-prompt" id="thPrompt" hidden role="dialog" aria-label="Theater">
+    <p class="th-big">Welcome to the theater.</p>
+    <p>Take a seat to pick a film.</p>
+    <div class="th-row"><button type="button" class="th-btn th-main" id="thSit">Sit down</button><button type="button" class="th-btn" id="thNot">Not now</button></div>
+  </div>
+  <div class="th-ui th-menu" id="thMenu" hidden role="group" aria-label="Pick a film">
+    <div class="th-pick">
+      <button type="button" class="th-arrow" id="thPrev" aria-label="Previous film">‹</button>
+      <div class="th-now"><b id="thTitle"></b><span id="thLine"></span></div>
+      <button type="button" class="th-arrow" id="thNext" aria-label="Next film">›</button>
+    </div>
+    <div class="th-row"><button type="button" class="th-btn th-main" id="thPlay">Play</button><button type="button" class="th-btn" id="thShuffle">Shuffle</button><button type="button" class="th-btn th-quiet" id="thStand">Stand up</button></div>
+    <p class="th-turn" id="thTurn" hidden>Turn your phone sideways for a bigger screen.</p>
+  </div>
+  <div class="th-ui th-ctrl" id="thCtrl" hidden role="group" aria-label="Film controls">
+    <button type="button" class="th-btn" id="thPause">Pause</button><button type="button" class="th-btn" id="thBack">Films</button><button type="button" class="th-btn th-quiet" id="thExit">Exit theater</button>
+  </div>
+  <div class="th-ui th-end" id="thEnd" hidden role="dialog" aria-label="Film finished">
+    <p class="th-big" id="thEndMsg">Thanks for watching.</p>
+    <div class="th-row"><button type="button" class="th-btn th-main" id="thAgain">Watch again</button><button type="button" class="th-btn" id="thAnother">Choose another film</button><button type="button" class="th-btn th-quiet" id="thLeave">Exit theater</button></div>
+    <a class="th-link" id="thLink" target="_blank" rel="noopener" hidden></a>
+  </div>
   <div class="g3d-toast" id="g3dToast" hidden><a id="g3dToastLink" target="_blank" rel="noopener"></a></div>
 </div>
 <script>/* the room opens first, unless the link points at a part of the page */
@@ -598,15 +655,26 @@ const EYE = 1.6, ART_Y = 1.55;
 const PLW = 1.6, PLH = 1.6, GAP = 0.34, MAT = 0.08, FW = 0.03, FD = 0.045;
 const BENCH = [[0, 3.45, 0.9, 0.24], [0, -3.45, 0.9, 0.24]];   // cx, cz, half x, half z
 
+// The theater, through an archway in the east wall
+const WT = 0.5, TX0 = HX + WT, TL = 16, TX1 = TX0 + TL, TZ = 6.5, TH = 7.2;   // wall thickness, room x from TX0 to TX1, half-width, height
+const DW = 1.3, DH0 = 2.7;                    // archway half-width, height where the curve starts (top at DH0+DW)
+const SW = 9.6, SH = 5.4, SY0 = 0.95;         // screen width, height, bottom edge
+const SCREEN_C = [TX1 - 0.06, SY0 + SH/2, 0];
+const SEAT_ROWS = [15.4, 17.0, 18.6, 20.2];
+const SEATS = [];                              // cx, cz, half x, half z: two blocks per row with an aisle down the middle
+SEAT_ROWS.forEach(x => { SEATS.push([x, -3.45, 0.36, 2.3], [x, 3.45, 0.36, 2.3]); });
+const SEAT_EYE = 1.15;
+
 // Where pieces hang, in WORKS order. x,z = point on the wall, n = direction the wall faces.
+// Photos only: the films have their own theater now. The middle of the east wall is the archway.
 const SLOTS = [
-  { x:-8.25, z:-HZ, nx:0, nz:1 }, { x:-2.75, z:-HZ, nx:0, nz:1 }, { x:2.75, z:-HZ, nx:0, nz:1 }, { x:8.25, z:-HZ, nx:0, nz:1 },
-  { x:8.25, z:HZ, nx:0, nz:-1 }, { x:2.75, z:HZ, nx:0, nz:-1 }, { x:-2.75, z:HZ, nx:0, nz:-1 }, { x:-8.25, z:HZ, nx:0, nz:-1 },
-  { x:-HX, z:0, nx:1, nz:0 },
   { x:2.5, z:-PHZ, nx:0, nz:-1, part:true }, { x:-2.5, z:-PHZ, nx:0, nz:-1, part:true },
   { x:-2.5, z:PHZ, nx:0, nz:1, part:true }, { x:2.5, z:PHZ, nx:0, nz:1, part:true },
-  { x:HX, z:0, nx:-1, nz:0 },
-  { x:-HX, z:-4.2, nx:1, nz:0 }, { x:HX, z:4.2, nx:-1, nz:0 }
+  { x:-HX, z:0, nx:1, nz:0 },
+  { x:-5.5, z:-HZ, nx:0, nz:1 }, { x:5.5, z:-HZ, nx:0, nz:1 },
+  { x:5.5, z:HZ, nx:0, nz:-1 }, { x:-5.5, z:HZ, nx:0, nz:-1 },
+  { x:HX, z:-4.2, nx:-1, nz:0 }, { x:HX, z:4.2, nx:-1, nz:0 },
+  { x:-HX, z:-4.2, nx:1, nz:0 }, { x:-HX, z:4.2, nx:1, nz:0 }
 ];
 
 let gl = null, isGL2 = false, prog = null, U = {}, aniso = null, maxAniso = 1;
@@ -614,7 +682,7 @@ let meshes = {}, pieces = [], images = [], woodTex = null, textTex = null;
 let lightPos = new Float32Array(64), lightDir = new Float32Array(48), lightCount = 0;
 let inited = false, ready = false, isOpen = false, running = false, last = 0;
 const cam = { x:-7.5, z:2.8, yaw:0.80, pitch:-0.02 };
-let vel = { f:0, s:0 }, fov = 1.08, aspect = 1.6, bob = 0, simT = 0, filmed = false;
+let vel = { f:0, s:0 }, fov = 1.08, aspect = 1.6, bob = 0, simT = 0, filmed = false, eyeY = EYE;
 const keys = Object.create(null);
 const joy = { x:0, y:0, id:null };
 let route = null;          // auto-walk: { pts:[[x,z],...], yaw, stuck }
@@ -631,6 +699,10 @@ function quad(m, o, a, b, n){
   const p1 = add(o,a), p2 = add(p1,b), p3 = add(o,b);
   const v = (p,u,w) => m.push(p[0],p[1],p[2],u,w,n[0],n[1],n[2]);
   v(o,0,0); v(p1,1,0); v(p2,1,1); v(o,0,0); v(p2,1,1); v(p3,0,1);
+}
+function q4(m, a, b, c, d, n){
+  const v = (p,u,w) => m.push(p[0],p[1],p[2],u,w,n[0],n[1],n[2]);
+  v(a,0,0); v(b,1,0); v(c,1,1); v(a,0,0); v(c,1,1); v(d,0,1);
 }
 function wquad(m, f, u0, u1, y0, y1, d){ quad(m, WP(f,u0,y0,d), mul(f.r,u1-u0), [0,y1-y0,0], f.n); }
 function wbox(m, f, u0, u1, y0, y1, d0, d1){
@@ -664,6 +736,7 @@ precision mediump float;
 varying vec3 vP; varying vec2 vUv; varying vec3 vN;
 uniform int uMode; uniform sampler2D uTex; uniform vec3 uColor; uniform float uAlpha; uniform vec2 uUvS;
 uniform vec3 uCam; uniform vec3 uRoom; uniform vec3 uPart;
+uniform vec2 uRC; uniform float uPan; uniform float uLight; uniform vec3 uGlow; uniform vec3 uScreen;
 uniform vec4 uLp[16]; uniform vec3 uLd[16]; uniform vec4 uBench[2]; uniform vec4 uShadow;
 const float AMB = 0.82;
 float spots(vec3 P, vec3 N){
@@ -678,6 +751,10 @@ float spots(vec3 P, vec3 N){
   }
   return s;
 }
+vec3 glow(vec3 P, vec3 N){                 // light thrown by the theater screen
+  vec3 d = uScreen - P; float r2 = dot(d,d);
+  return uGlow*(0.3 + 0.7*max(dot(N, normalize(d)), 0.0))*(40.0/(r2 + 40.0));
+}
 float panel(vec2 q, float hw, float hl, float blur){
   float px = abs(mod(q.x + 2.0, 4.0) - 2.0);
   float a = 1.0 - smoothstep(hw-blur, hw+blur, px);
@@ -688,13 +765,15 @@ void main(){
   vec3 col; float alpha = 1.0;
   if (uMode == 0){                      // walls and mats
     float aoY = 1.0 - 0.22*exp(-vP.y/0.20) - 0.10*exp(-(uRoom.z-vP.y)/0.5);
-    float dx = uRoom.x-abs(vP.x), dz = uRoom.y-abs(vP.z);
+    vec2 rp = vP.xz - uRC;
+    float dx = uRoom.x-abs(rp.x), dz = uRoom.y-abs(rp.y);
     float aoC = 1.0 - 0.15*exp(-dx/0.5)*abs(vN.z) - 0.15*exp(-dz/0.5)*abs(vN.x);
     float light = AMB*aoY*aoC*(0.95+0.05*vN.y) + spots(vP,vN);
-    col = uColor*light + vec3(0.035,0.022,0.008)*exp(-vP.y/1.1);
+    col = (uColor*light + vec3(0.035,0.022,0.008)*exp(-vP.y/1.1))*uLight + uColor*glow(vP,vN);
   } else if (uMode == 1){               // floor
     vec3 wood = texture2D(uTex, vP.xz/2.4).rgb;
-    float dW = min(uRoom.x-abs(vP.x), uRoom.y-abs(vP.z));
+    vec2 rp = vP.xz - uRC;
+    float dW = min(uRoom.x-abs(rp.x), uRoom.y-abs(rp.y));
     float dP = length(max(abs(vP.xz)-uPart.xy, 0.0));
     float ao = 1.0 - 0.30*exp(-dW/0.35) - 0.30*exp(-dP/0.30);
     for (int i = 0; i < 2; i++){
@@ -703,31 +782,35 @@ void main(){
     }
     float light = AMB*max(ao,0.2) + spots(vP, vec3(0.0,1.0,0.0))*0.9;
     vec3 R = reflect(normalize(vP-uCam), vec3(0.0,1.0,0.0));
-    float t = uRoom.z/max(R.y,0.02); vec2 q = vP.xz + R.xz*t;
+    float t = uRoom.z/max(R.y,0.02); vec2 q = rp + R.xz*t;
     float inside = step(abs(q.x),uRoom.x)*step(abs(q.y),uRoom.y);
-    vec3 env = mix(vec3(0.80), mix(vec3(0.84), vec3(0.72,0.81,0.77), panel(q,0.55,4.6,0.25+0.03*t)), inside);
+    vec3 env = mix(vec3(0.80), mix(vec3(0.84), vec3(0.72,0.81,0.77), uPan*panel(q,0.55,4.6,0.25+0.03*t)), inside);
     float fres = 0.04 + 0.5*pow(1.0-clamp(R.y,0.0,1.0), 5.0);
-    col = wood*light*(1.0-fres*0.6) + env*fres*0.55;
+    col = (wood*light*(1.0-fres*0.6) + env*fres*0.55)*uLight + wood*glow(vP, vec3(0.0,1.0,0.0))*1.3;
   } else if (uMode == 2){               // ceiling with glass panels
     float dW = min(uRoom.x-abs(vP.x), uRoom.y-abs(vP.z));
     vec3 base = vec3(0.86,0.86,0.84)*(1.0-0.10*exp(-dW/0.6));
     float pf = panel(vP.xz,0.60,4.65,0.012), pg = panel(vP.xz,0.54,4.59,0.012);
     float rib = step(0.94, fract(vP.z/1.15));
     col = mix(base, vec3(0.50,0.52,0.50), pf);
-    col = mix(col, mix(vec3(0.70,0.79,0.75), vec3(0.58,0.64,0.61), rib), pg);
+    col = mix(col, mix(vec3(0.70,0.79,0.75), vec3(0.58,0.64,0.61), rib), pg)*uLight;
   } else if (uMode == 3){               // artwork
     vec3 tex = texture2D(uTex, (vUv-0.5)*uUvS+0.5).rgb;
-    col = tex*min(0.84 + spots(vP,vN)*0.9, 1.06); alpha = uAlpha;
+    col = tex*min(0.84 + spots(vP,vN)*0.9, 1.06)*uLight; alpha = uAlpha;
   } else if (uMode == 4){               // frames, bench, fittings
     float l = 0.45 + 0.35*max(vN.y,0.0) + 0.2*abs(vN.x) + spots(vP,vN)*0.6;
-    col = uColor*l;
+    col = uColor*l*uLight + uColor*glow(vP,vN)*2.0;
   } else if (uMode == 5){               // soft shadow behind a frame
     vec2 p = (vUv-0.5)*2.0*uShadow.zw - vec2(0.0,-0.045);
     vec2 d = abs(p)-uShadow.xy;
     float sd = length(max(d,0.0)) + min(max(d.x,d.y),0.0);
     col = vec3(0.0); alpha = 0.34*exp(-max(sd,0.0)/0.075)*(1.0-smoothstep(0.12,0.28,sd));
+  } else if (uMode == 7){               // the theater screen: lit from within, letterboxed
+    vec2 uv = (vUv-0.5)*uUvS + 0.5;
+    float inside = step(0.0,uv.x)*step(uv.x,1.0)*step(0.0,uv.y)*step(uv.y,1.0);
+    col = texture2D(uTex, uv).rgb*inside;
   } else {                              // wall text
-    vec4 t = texture2D(uTex, vUv); col = t.rgb; alpha = t.a*uAlpha;
+    vec4 t = texture2D(uTex, vUv); col = t.rgb*uLight; alpha = t.a*uAlpha;
   }
   gl_FragColor = vec4(col, alpha);
 }`;
@@ -940,6 +1023,215 @@ function videoFrame(dt, dialogOpen){
   if (vidReady) vidAlpha = Math.min(1, vidAlpha + dt/0.6);
 }
 
+/* --- the theater --- */
+const FILMS = WORKS.filter(w => w.type === "video");
+const thPrompt = $("thPrompt"), thMenu = $("thMenu"), thCtrl = $("thCtrl"), thEnd = $("thEnd");
+let tState = "none", tDismissed = false, tPick = 0, tGlide = null, tVid = null, tWait = 0, ctrlTimer = 0, seatAspect = 0;
+let screenTex = null, signTex = null, theaterTex = null, scrMode = "menu", filmReady = false;
+const filmUv = [1, 1];
+let lightLvl = 1, lightGoal = 1, glowAmt = 0.08, glowGoal = 0.08, glowCol = [0.6, 0.6, 0.6];
+const sc = document.createElement("canvas"); sc.width = 1600; sc.height = 900;
+const sctx = sc.getContext("2d");
+const glowC = document.createElement("canvas"); glowC.width = glowC.height = 8;
+const glowX = glowC.getContext("2d", { willReadFrequently: true });
+
+function blankTex(){
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0,0,0,255]));
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return t;
+}
+function upload(tex, src){
+  gl.bindTexture(gl.TEXTURE_2D, tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+}
+function sampleGlow(src){            // the screen's average colour, for the light it throws into the room
+  try {
+    glowX.drawImage(src, 0, 0, 8, 8); const d = glowX.getImageData(0, 0, 8, 8).data; let r = 0, g = 0, b = 0;
+    for (let i = 0; i < d.length; i += 4){ r += d[i]; g += d[i+1]; b += d[i+2]; }
+    const n = d.length/4*255; glowCol = [r/n, g/n, b/n];
+  } catch (e){}
+}
+function drawSign(){
+  const c = document.createElement("canvas"); c.width = 1024; c.height = 205; const x = c.getContext("2d");
+  x.clearRect(0, 0, 1024, 205); x.fillStyle = "#0c0c0c"; x.textAlign = "center"; x.textBaseline = "middle";
+  x.font = "italic 400 128px " + SERIF; x.fillText("Theater", 512, 104);
+  upload(signTex, c);
+}
+function filmPoster(i){ const k = WORKS.indexOf(FILMS[i]); return images[k]; }
+function drawMenu(){                 // what the screen shows while you choose
+  const W = 1600, Hh = 900, film = FILMS[tPick], img = filmPoster(tPick);
+  sctx.fillStyle = "#050505"; sctx.fillRect(0, 0, W, Hh);
+  if (img){
+    const s = Math.max(W/img.naturalWidth, Hh/img.naturalHeight), w = img.naturalWidth*s, h = img.naturalHeight*s;
+    sctx.globalAlpha = 0.9; sctx.drawImage(img, (W-w)/2, (Hh-h)/2, w, h); sctx.globalAlpha = 1;
+  }
+  const g = sctx.createLinearGradient(0, Hh*0.35, 0, Hh); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,.88)");
+  sctx.fillStyle = g; sctx.fillRect(0, 0, W, Hh);
+  sctx.fillStyle = "rgba(0,0,0,.55)"; sctx.fillRect(0, 0, W, 92);
+  sctx.fillStyle = "#F3F3F1"; sctx.textBaseline = "alphabetic"; sctx.textAlign = "left";
+  sctx.font = "700 34px " + SERIF; sctx.fillText("NOW SHOWING", 70, 60);
+  sctx.textAlign = "right"; sctx.font = "400 34px " + SERIF; sctx.fillText((tPick+1) + " / " + FILMS.length, W-70, 60);
+  sctx.textAlign = "left"; sctx.font = "italic 400 104px " + SERIF;
+  let title = film.title; while (sctx.measureText(title).width > W-140 && title.length > 4) title = title.slice(0, -2);
+  if (title !== film.title) title = title.trim() + "…";
+  sctx.fillText(title, 70, Hh-150);
+  sctx.font = "700 40px " + SERIF; sctx.fillStyle = "#D6D6D3"; if (film.line) sctx.fillText(film.line, 74, Hh-88);
+  sctx.font = "400 40px " + SERIF; sctx.textAlign = "center"; sctx.fillStyle = "#F3F3F1";
+  sctx.fillText("‹", 40, Hh/2 + 14); sctx.fillText("›", W-40, Hh/2 + 14);
+  upload(screenTex, sc); sampleGlow(sc);
+  $("thTitle").textContent = film.title; $("thLine").textContent = film.line || "";
+}
+function seatPose(){                 // where to sit so the whole screen fits this window
+  const th = Math.tan(fov/2), dist = Math.min(TL-1.6, Math.max(9.6, 1.12*(SW/2+0.4)/(th*aspect), 1.15*(SH/2+0.4)/th));
+  const x = TX1 - dist, pitch = 0.75*Math.atan2(SCREEN_C[1] - SEAT_EYE, dist);   // look up a little less than the centre, like a real seat
+  return { x, z: 0, yaw: Math.PI/2, pitch, eye: SEAT_EYE };
+}
+function theaterLocked(){ return tState === "sitting" || tState === "menu" || tState === "playing" || tState === "ended" || tState === "standing"; }
+function show(el, on){ el.hidden = !on; }
+function uiFor(state){
+  show(thPrompt, state === "prompt"); show(thMenu, state === "menu"); show(thEnd, state === "ended");
+  show(thCtrl, false);
+  stick.hidden = theaterLocked(); chip.hidden = true;
+  $("thTurn").hidden = !(state === "menu" && aspect < 0.9);
+}
+function setState(s){ tState = s; uiFor(s); root.classList.toggle("th-dark", s === "playing"); root.classList.toggle("th-seated", theaterLocked()); }
+function glide(to, dur, done){
+  tGlide = { from: { x: cam.x, z: cam.z, yaw: cam.yaw, pitch: cam.pitch, eye: eyeY }, to, t: 0, dur: REDUCED ? 0.01 : dur, done };
+  route = null; vel.f = vel.s = 0;
+}
+function sitDown(){
+  setState("sitting"); seatAspect = aspect;
+  const to = seatPose(); to.yaw = cam.yaw + angDiff(to.yaw, cam.yaw);
+  glide(to, 2.4, () => { setState("menu"); drawMenu(); });
+}
+function standUp(){
+  stopFilm(); lightGoal = 1; glowGoal = 0.08; scrMode = "menu"; drawMenu();
+  setState("standing"); tDismissed = true;
+  const to = { x: cam.x, z: 0, yaw: cam.yaw + angDiff(-Math.PI/2, cam.yaw), pitch: 0, eye: EYE };
+  glide(to, 1.8, () => setState("none"));
+}
+function choose(d){ tPick = (tPick + d + FILMS.length) % FILMS.length; drawMenu(); }
+function shuffle(){
+  if (FILMS.length < 2) return;
+  let n = tPick; while (n === tPick) n = Math.floor(Math.random()*FILMS.length);
+  tPick = n; drawMenu();
+}
+function playFilm(){
+  const film = FILMS[tPick]; if (!film) return;
+  if (!tVid){
+    tVid = document.createElement("video"); tVid.playsInline = true; tVid.setAttribute("playsinline", ""); tVid.preload = "auto";
+    tVid.addEventListener("ended", () => { if (tState === "playing") filmEnded(); });
+    tVid.addEventListener("error", () => { if (tState === "playing"){ filmEnded(true); } });
+  }
+  filmReady = false; scrMode = "film";
+  tVid.muted = false; tVid.src = film.src;
+  try { tVid.currentTime = 0; } catch (e){}
+  const pr = tVid.play(); if (pr && pr.catch) pr.catch(() => { tVid.muted = true; tVid.play().catch(() => {}); });
+  setState("playing"); lightGoal = 0; glowGoal = 0.32; pokeCtrl();
+  $("thPause").textContent = "Pause";
+}
+function stopFilm(){
+  if (tVid){ try { tVid.pause(); tVid.removeAttribute("src"); tVid.load(); } catch (e){} }
+  filmReady = false; scrMode = "menu";
+}
+function filmEnded(failed){
+  setState("ended"); lightGoal = 0.32; glowGoal = 0.2;
+  $("thEndMsg").textContent = failed ? "That film didn't load. Try another one." : "Thanks for watching.";
+  const film = FILMS[tPick]; const a = $("thLink");
+  if (film && film.link){ a.href = film.link; a.textContent = linkLabel(film.link); a.hidden = false; } else a.hidden = true;
+}
+function backToFilms(){ stopFilm(); lightGoal = 1; glowGoal = 0.08; drawMenu(); setState("menu"); }
+function pokeCtrl(){
+  if (tState !== "playing") return;
+  show(thCtrl, true); root.classList.add("th-poke"); clearTimeout(ctrlTimer);
+  ctrlTimer = setTimeout(() => { if (tState === "playing" && tVid && !tVid.paused){ show(thCtrl, false); root.classList.remove("th-poke"); } }, 2600);
+}
+function theaterReset(){
+  stopFilm(); tGlide = null; lightLvl = lightGoal = 1; glowAmt = glowGoal = 0.08; eyeY = EYE; tDismissed = false;
+  if (ready) drawMenu();
+  setState("none");
+}
+function theaterEscape(){
+  if (tState === "playing" || tState === "ended") backToFilms();
+  else if (tState === "menu") standUp();
+  else if (tState === "prompt"){ tDismissed = true; setState("none"); }
+}
+function theaterKey(e){
+  if (tState === "menu"){
+    if (e.code === "ArrowLeft"){ choose(-1); e.preventDefault(); return true; }
+    if (e.code === "ArrowRight"){ choose(1); e.preventDefault(); return true; }
+    if (e.code === "Enter"){ playFilm(); e.preventDefault(); return true; }
+    if (e.code === "KeyS"){ shuffle(); e.preventDefault(); return true; }
+    return /^(Key[WASDQE]|Arrow(Up|Down))$/.test(e.code);
+  }
+  if (tState === "playing"){
+    if (e.code === "Space"){ togglePause(); e.preventDefault(); return true; }
+    pokeCtrl(); return /^(Key[WASDQE]|Arrow(Up|Down|Left|Right))$/.test(e.code);
+  }
+  if (tState === "prompt" && e.code === "Enter"){ sitDown(); e.preventDefault(); return true; }
+  return theaterLocked();
+}
+function togglePause(){
+  if (!tVid) return;
+  if (tVid.paused){ tVid.play().catch(() => {}); $("thPause").textContent = "Pause"; lightGoal = 0; }
+  else { tVid.pause(); $("thPause").textContent = "Play"; lightGoal = 0.2; }
+  pokeCtrl();
+}
+function theaterStep(dt){
+  // lights and screen glow ease toward where they're going
+  lightLvl += (lightGoal - lightLvl)*Math.min(1, dt*(lightGoal < lightLvl ? 1.6 : 2.4));
+  glowAmt += (glowGoal - glowAmt)*Math.min(1, dt*2);
+  if (tGlide){
+    tGlide.t += dt; const u = Math.min(1, tGlide.t/tGlide.dur), e = u*u*(3-2*u), a = tGlide.from, b = tGlide.to;
+    cam.x = a.x + (b.x-a.x)*e; cam.z = a.z + (b.z-a.z)*e; cam.yaw = a.yaw + (b.yaw-a.yaw)*e; cam.pitch = a.pitch + (b.pitch-a.pitch)*e;
+    eyeY = a.eye + (b.eye-a.eye)*e; bob = 0;
+    if (u >= 1){ const d = tGlide.done; tGlide = null; if (d) d(); }
+  }
+  // the prompt to sit, once you're inside
+  const inTheater = cam.x > TX0 + 0.8;
+  if (tState === "none" && inTheater && !tDismissed && !document.querySelector("dialog[open]")) setState("prompt");
+  if (tState === "prompt" && !inTheater) setState("none");
+  if (cam.x < TX0 - 0.2) tDismissed = false;
+  // seated: keep the whole screen in view if the window changes shape
+  if ((tState === "menu" || tState === "playing" || tState === "ended") && !tGlide && Math.abs(aspect - seatAspect) > 0.05){
+    seatAspect = aspect; const p = seatPose(); cam.x = p.x; cam.pitch = p.pitch; uiFor(tState);
+  }
+  // the film, painted onto the screen
+  if (tVid && scrMode === "film" && tVid.readyState >= 2 && tVid.videoWidth){
+    tWait -= dt;
+    if (tWait <= 0){
+      tWait = 1/30;
+      try {
+        upload(theaterTex, tVid);
+        if (!filmReady){
+          const va = tVid.videoWidth/tVid.videoHeight, sa = SW/SH;
+          filmUv[0] = va < sa ? sa/va : 1; filmUv[1] = va < sa ? 1 : va/sa; filmReady = true;
+        }
+        if ((frames % 6) === 0) sampleGlow(tVid);
+      } catch (e){}
+    }
+  }
+}
+$("thSit").addEventListener("click", sitDown);
+$("thNot").addEventListener("click", () => { tDismissed = true; setState("none"); });
+$("thPrev").addEventListener("click", () => choose(-1));
+$("thNext").addEventListener("click", () => choose(1));
+$("thShuffle").addEventListener("click", shuffle);
+$("thPlay").addEventListener("click", playFilm);
+$("thStand").addEventListener("click", standUp);
+$("thPause").addEventListener("click", togglePause);
+$("thBack").addEventListener("click", backToFilms);
+$("thExit").addEventListener("click", standUp);
+$("thAgain").addEventListener("click", playFilm);
+$("thAnother").addEventListener("click", backToFilms);
+$("thLeave").addEventListener("click", standUp);
+root.addEventListener("pointermove", pokeCtrl);
+root.addEventListener("pointerdown", pokeCtrl);
+if (!COARSE_HINT()) hintEl.textContent = "Walk with W A S D or the arrow keys. Hold Shift to go faster. Drag to look around.";
+function COARSE_HINT(){ return window.matchMedia("(pointer: coarse)").matches; }
+
 /* --- build the room --- */
 function linkLabel(href){
   let h = ""; try { h = new URL(href).hostname; } catch (e){}
@@ -956,8 +1248,37 @@ function buildScene(){
   wquad(wall, frameOf({ x:0, z:-HZ, nx:0, nz:1 }), -HX, HX, 0, H, 0);
   wquad(wall, frameOf({ x:0, z:HZ, nx:0, nz:-1 }), -HX, HX, 0, H, 0);
   wquad(wall, frameOf({ x:-HX, z:0, nx:1, nz:0 }), -HZ, HZ, 0, H, 0);
-  wquad(wall, frameOf({ x:HX, z:0, nx:-1, nz:0 }), -HZ, HZ, 0, H, 0);
+  archWall(wall, HX, -1, H, HZ);                     // east wall, with the archway to the theater
   abox(wall, -PHX, PHX, 0, PH, -PHZ, PHZ);
+  // the archway's own surfaces: the curved underside, the straight sides, and the floor through it
+  const N = 20, tw = [], tf = [];
+  for (let i = 0; i < N; i++){
+    const a0 = Math.PI*i/N, a1 = Math.PI*(i+1)/N;
+    const z0 = DW*Math.cos(a0), y0 = DH0 + DW*Math.sin(a0), z1 = DW*Math.cos(a1), y1 = DH0 + DW*Math.sin(a1), am = (a0+a1)/2;
+    q4(wall, [HX,y0,z0], [TX0,y0,z0], [TX0,y1,z1], [HX,y1,z1], [0, -Math.sin(am), -Math.cos(am)]);
+  }
+  q4(wall, [HX,0,DW], [TX0,0,DW], [TX0,DH0,DW], [HX,DH0,DW], [0,0,-1]);
+  q4(wall, [HX,0,-DW], [TX0,0,-DW], [TX0,DH0,-DW], [HX,DH0,-DW], [0,0,1]);
+  quad(floor, [HX,0,DW], [WT,0,0], [0,0,-2*DW], [0,1,0]);
+  // the theater: white walls, a big screen on the far wall, rows of seats
+  quad(tf, [TX0,0,TZ], [TL,0,0], [0,0,-2*TZ], [0,1,0]);
+  const tc = []; quad(tc, [TX0,TH,-TZ], [TL,0,0], [0,0,2*TZ], [0,-1,0]);
+  wquad(tw, frameOf({ x:(TX0+TX1)/2, z:-TZ, nx:0, nz:1 }), -TL/2, TL/2, 0, TH, 0);
+  wquad(tw, frameOf({ x:(TX0+TX1)/2, z:TZ, nx:0, nz:-1 }), -TL/2, TL/2, 0, TH, 0);
+  wquad(tw, frameOf({ x:TX1, z:0, nx:-1, nz:0 }), -TZ, TZ, 0, TH, 0);
+  archWall(tw, TX0, 1, TH, TZ);
+  const td = [], sf = frameOf({ x:TX1, z:0, nx:-1, nz:0 }), B = 0.14;
+  wbox(td, sf, -SW/2-B, SW/2+B, SY0+SH, SY0+SH+B, 0, 0.08); wbox(td, sf, -SW/2-B, SW/2+B, SY0-B, SY0, 0, 0.08);
+  wbox(td, sf, -SW/2-B, -SW/2, SY0, SY0+SH, 0, 0.08); wbox(td, sf, SW/2, SW/2+B, SY0, SY0+SH, 0, 0.08);
+  for (const st of SEATS){
+    const [cx, cz, hx, hz] = st, z0 = cz-hz, z1 = cz+hz;
+    abox(td, cx-0.28, cx+0.30, 0.38, 0.52, z0, z1);          // cushions
+    abox(td, cx-0.30, cx+0.26, 0, 0.38, z0+0.05, z1-0.05);   // base
+    abox(td, cx-0.38, cx-0.26, 0.38, 1.08, z0, z1);          // backs
+    for (let k = 0; k <= 7; k++){ const z = z0 + k*(z1-z0)/7; abox(td, cx-0.30, cx+0.30, 0.52, 0.68, z-0.035, z+0.035); }   // armrests
+  }
+  const scr = []; wquad(scr, sf, -SW/2, SW/2, SY0, SY0+SH, 0.07);
+  const sign = []; wquad(sign, frameOf({ x:HX, z:0, nx:-1, nz:0 }), -1.25, 1.25, DH0+DW+0.18, DH0+DW+0.68, 0.006);
   for (const b of BENCH){
     abox(dark, b[0]-b[2], b[0]+b[2], 0.37, 0.46, b[1]-b[3], b[1]+b[3]);
     abox(dark, b[0]-b[2]+0.12, b[0]-b[2]+0.18, 0, 0.37, b[1]-b[3]+0.03, b[1]+b[3]-0.03);
@@ -967,6 +1288,7 @@ function buildScene(){
   let li = 0;
   lightCount = 0;
   WORKS.forEach((w, i) => {
+    if (w.type === "video") return;                   // films play in the theater
     const img = images[i], s = SLOTS[pieces.length];
     if (!s || !img) return;
     const f = frameOf(s), asp = img.naturalWidth/img.naturalHeight;
@@ -1001,7 +1323,20 @@ function buildScene(){
       tex: makeTexture(img), shadowU: [ow/2, oh/2, ow/2+0.3, oh/2+0.3], artW: wd, artH: h
     });
   });
-  meshes = { wall: buffer(wall), floor: buffer(floor), ceil: buffer(ceil), mats: buffer(mats), dark: buffer(dark), pale: buffer(pale) };
+  meshes = { wall: buffer(wall), floor: buffer(floor), ceil: buffer(ceil), mats: buffer(mats), dark: buffer(dark), pale: buffer(pale),
+             tWall: buffer(tw), tFloor: buffer(tf), tCeil: buffer(tc), tDark: buffer(td), screen: buffer(scr), sign: buffer(sign) };
+}
+function archWall(m, x, nx, top, half){      // a wall across the room at x, with the archway cut out of its middle
+  const f = frameOf({ x, z:0, nx, nz:0 }), sgn = nx < 0 ? 1 : -1;   // sgn maps wall-u to z
+  quad(m, [x,0,-half], [0,0,half-DW], [0,top,0], [nx,0,0]);
+  quad(m, [x,0,DW], [0,0,half-DW], [0,top,0], [nx,0,0]);
+  const N = 20;
+  for (let i = 0; i < N; i++){
+    const a0 = Math.PI*i/N, a1 = Math.PI*(i+1)/N;
+    const z0 = DW*Math.cos(a0), y0 = DH0 + DW*Math.sin(a0), z1 = DW*Math.cos(a1), y1 = DH0 + DW*Math.sin(a1);
+    q4(m, [x,y0,z0], [x,y1,z1], [x,top,z1], [x,top,z0], [nx,0,0]);
+  }
+  void f; void sgn;
 }
 
 function setupGL(){
@@ -1020,6 +1355,8 @@ function setupGL(){
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   videoStop();
+  screenTex = blankTex(); signTex = blankTex(); theaterTex = blankTex();
+  drawSign();
   buildScene();
   prog = gl.createProgram();
   gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS(lightCount)));
@@ -1027,11 +1364,13 @@ function setupGL(){
   gl.linkProgram(prog);
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog) || "link");
   gl.useProgram(prog);
-  for (const n of ["uVP","uMode","uTex","uColor","uAlpha","uUvS","uCam","uRoom","uPart","uLp","uLd","uBench","uShadow"]) U[n] = gl.getUniformLocation(prog, n);
+  for (const n of ["uVP","uMode","uTex","uColor","uAlpha","uUvS","uCam","uRoom","uPart","uLp","uLd","uBench","uShadow","uRC","uPan","uLight","uGlow","uScreen"]) U[n] = gl.getUniformLocation(prog, n);
   gl.uniform1i(U.uTex, 0);
   gl.uniform3f(U.uRoom, HX, HZ, H); gl.uniform3f(U.uPart, PHX, PHZ, PH);
   gl.uniform4fv(U.uLp, lightPos); gl.uniform3fv(U.uLd, lightDir);
   gl.uniform4fv(U.uBench, new Float32Array([].concat(BENCH[0], BENCH[1])));
+  gl.uniform3f(U.uScreen, SCREEN_C[0], SCREEN_C[1], SCREEN_C[2]);
+  drawMenu();
   gl.enableVertexAttribArray(0); gl.enableVertexAttribArray(1); gl.enableVertexAttribArray(2);
   gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -1059,7 +1398,7 @@ function basis(){
   return { f, r, u };
 }
 function viewProj(){
-  const { f, r, u } = basis(), p = [cam.x, EYE + bob, cam.z];
+  const { f, r, u } = basis(), p = [cam.x, eyeY + bob, cam.z];
   const near = 0.08, far = 60, t = 1/Math.tan(fov/2);
   const dot3 = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
   const V = [r[0],u[0],-f[0],0, r[1],u[1],-f[1],0, r[2],u[2],-f[2],0, -dot3(r,p),-dot3(u,p),dot3(f,p),1];
@@ -1087,12 +1426,24 @@ function render(){
   gl.viewport(0, 0, canvas.width, canvas.height);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.uniformMatrix4fv(U.uVP, false, viewProj());
-  gl.uniform3f(U.uCam, cam.x, EYE + bob, cam.z);
+  gl.uniform3f(U.uCam, cam.x, eyeY + bob, cam.z);
   gl.disable(gl.BLEND); gl.depthMask(true); gl.disable(gl.POLYGON_OFFSET_FILL);
   gl.uniform1f(U.uAlpha, 1); gl.uniform2f(U.uUvS, 1, 1);
+  gl.uniform1f(U.uLight, lightLvl); gl.uniform3f(U.uGlow, glowCol[0]*glowAmt, glowCol[1]*glowAmt, glowCol[2]*glowAmt);
+  // the gallery
+  gl.uniform2f(U.uRC, 0, 0); gl.uniform3f(U.uRoom, HX, HZ, H); gl.uniform1f(U.uPan, 1);
   gl.uniform3f(U.uColor, 0.955, 0.955, 0.94); draw(meshes.wall, 0);
   draw(meshes.floor, 1, woodTex);
   draw(meshes.ceil, 2);
+  // the theater
+  gl.uniform2f(U.uRC, (TX0+TX1)/2, 0); gl.uniform3f(U.uRoom, TL/2, TZ, TH); gl.uniform1f(U.uPan, 0);
+  gl.uniform3f(U.uColor, 0.955, 0.955, 0.94); draw(meshes.tWall, 0);
+  gl.uniform3f(U.uColor, 0.93, 0.93, 0.92); draw(meshes.tCeil, 0);
+  draw(meshes.tFloor, 1, woodTex);
+  gl.uniform3f(U.uColor, 0.10, 0.10, 0.10); draw(meshes.tDark, 4);
+  if (scrMode === "film" && filmReady){ gl.uniform2f(U.uUvS, filmUv[0], filmUv[1]); draw(meshes.screen, 7, theaterTex); gl.uniform2f(U.uUvS, 1, 1); }
+  else draw(meshes.screen, 7, screenTex);
+  gl.uniform2f(U.uRC, 0, 0); gl.uniform3f(U.uRoom, HX, HZ, H); gl.uniform1f(U.uPan, 1);
   gl.uniform3f(U.uColor, 0.985, 0.985, 0.97); draw(meshes.mats, 0);
   gl.uniform3f(U.uColor, 0.07, 0.07, 0.07); draw(meshes.dark, 4);
   gl.uniform3f(U.uColor, 0.9, 0.9, 0.88); draw(meshes.pale, 4);
@@ -1104,16 +1455,23 @@ function render(){
     gl.uniform2f(U.uUvS, 1, 1);
   }
   for (const p of pieces){ gl.uniform4fv(U.uShadow, p.shadowU); draw(p.shadow, 5); }
+  gl.uniform1f(U.uAlpha, 1); draw(meshes.sign, 6, signTex);
   if (act !== -1 && textAlpha > 0){ gl.uniform1f(U.uAlpha, textAlpha); draw(pieces[act].text, 6, textTex); }
 }
 
 /* --- moving --- */
-function obstacle(x, z){          // the freestanding wall or a bench, grown by body width
+function obstacle(x, z){          // the freestanding wall, a bench or a row of seats, grown by body width
   if (Math.abs(x) < PHX+0.45 && Math.abs(z) < PHZ+0.45) return [-PHX-0.45, PHX+0.45, -PHZ-0.45, PHZ+0.45];
-  for (const b of BENCH) if (Math.abs(x-b[0]) < b[2]+0.35 && Math.abs(z-b[1]) < b[3]+0.35) return [b[0]-b[2]-0.35, b[0]+b[2]+0.35, b[1]-b[3]-0.35, b[1]+b[3]+0.35];
+  for (const b of BENCH.concat(SEATS)) if (Math.abs(x-b[0]) < b[2]+0.35 && Math.abs(z-b[1]) < b[3]+0.35) return [b[0]-b[2]-0.35, b[0]+b[2]+0.35, b[1]-b[3]-0.35, b[1]+b[3]+0.35];
   return null;
 }
-function blocked(x, z){ return Math.abs(x) > HX-0.45 || Math.abs(z) > HZ-0.45 || !!obstacle(x, z); }
+function insideRooms(x, z){
+  const g = Math.abs(x) <= HX-0.45 && Math.abs(z) <= HZ-0.45;
+  const t = x >= TX0+0.45 && x <= TX1-0.45 && Math.abs(z) <= TZ-0.45;
+  const d = x > HX-1.2 && x < TX0+1.2 && Math.abs(z) <= DW-0.35;
+  return g || t || d;
+}
+function blocked(x, z){ return !insideRooms(x, z) || !!obstacle(x, z); }
 function moveBy(dx, dz){
   if (!blocked(cam.x+dx, cam.z)) cam.x += dx;
   if (!blocked(cam.x, cam.z+dz)) cam.z += dz;
@@ -1153,7 +1511,8 @@ function step(dt){
   simT += dt;
   const dialogOpen = !!document.querySelector("dialog[open]");
   let f = 0, s = 0, turn = 0;
-  if (!dialogOpen){
+  const seated = theaterLocked();
+  if (!dialogOpen && !seated){
     if (keys.KeyW || keys.ArrowUp) f += 1;
     if (keys.KeyS || keys.ArrowDown) f -= 1;
     if (keys.KeyD) s += 1;
@@ -1187,7 +1546,8 @@ function step(dt){
   } else {
     cam.yaw += turn*1.9*dt;
     const k = Math.min(1, dt*9);
-    vel.f += ((f > 0 ? f*2.7 : f*1.7) - vel.f)*k; vel.s += (s*2.0 - vel.s)*k;
+    const fast = (keys.ShiftLeft || keys.ShiftRight) ? 1.8 : 1;      // hold Shift to walk faster
+    vel.f += ((f > 0 ? f*2.7*fast : f*1.7*fast) - vel.f)*k; vel.s += (s*2.0*fast - vel.s)*k;
     const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
     moveBy((sy*vel.f + cy*vel.s)*dt, (-cy*vel.f + sy*vel.s)*dt);
     const sp = Math.hypot(vel.f, vel.s);
@@ -1195,9 +1555,10 @@ function step(dt){
   }
   updateText(dt);
   videoFrame(dt, dialogOpen);
+  theaterStep(dt);
 }
 function ndcX(pt){                  // where a point sits across the screen: -1 left edge, 1 right edge
-  const { f, r } = basis(), vx = pt[0]-cam.x, vy = pt[1]-EYE, vz = pt[2]-cam.z;
+  const { f, r } = basis(), vx = pt[0]-cam.x, vy = pt[1]-eyeY, vz = pt[2]-cam.z;
   const xc = vx*r[0] + vz*r[2], zc = vx*f[0] + vy*f[1] + vz*f[2];
   return zc > 0.05 ? xc/(zc*Math.tan(fov/2)*aspect) : (xc >= 0 ? 9 : -9);
 }
@@ -1221,7 +1582,8 @@ function frame(t){
   if (raw > 0 && raw < 0.25) slowFor += (raw - slowFor)*0.08;
   // sharpness follows the computer: it steps down only if frames stay slow, and climbs back once they're quick again.
   // The first few seconds are skipped, because loading the films and photos always makes them slow.
-  if (!COARSE && ++frames > 240 && frames % 45 === 0){      // phones were always smooth, so they keep full sharpness
+  frames++;
+  if (!COARSE && frames > 240 && frames % 45 === 0){      // phones were always smooth, so they keep full sharpness
     if (slowFor > 0.03 && quality > 0.6){ quality = Math.max(0.6, quality*0.88); slowFor = 0.022; }
     else if (slowFor < 0.019 && quality < 1){ quality = Math.min(1, quality/0.88); }
   }
@@ -1236,7 +1598,7 @@ function rayFrom(cx, cy){
   const { f, r, u } = basis(), th = Math.tan(fov/2);
   const d = [f[0]+r[0]*nx*th*aspect+u[0]*ny*th, f[1]+r[1]*nx*th*aspect+u[1]*ny*th, f[2]+r[2]*nx*th*aspect+u[2]*ny*th];
   const l = Math.hypot(d[0], d[1], d[2]);
-  return { o: [cam.x, EYE + bob, cam.z], d: [d[0]/l, d[1]/l, d[2]/l] };
+  return { o: [cam.x, eyeY + bob, cam.z], d: [d[0]/l, d[1]/l, d[2]/l] };
 }
 function rayBox(ray, mn, mx){
   let t0 = 0, t1 = 1e9;
@@ -1293,9 +1655,10 @@ canvas.addEventListener("pointermove", e => {
     if (drag.dist > 6){
       const k = fov/Math.max(1, canvas.clientHeight)*1.15;
       cam.yaw -= dx*k; cam.pitch = Math.max(-0.7, Math.min(0.7, cam.pitch + dy*k)); route = null;
+      if (theaterLocked()){ cam.yaw = Math.max(Math.PI/2-1.1, Math.min(Math.PI/2+1.1, cam.yaw)); cam.pitch = Math.max(-0.35, Math.min(0.65, cam.pitch)); }
       if (!moved){ moved = true; hintEl.classList.add("gone"); }
     }
-  } else if (ready && e.pointerType === "mouse"){
+  } else if (ready && e.pointerType === "mouse" && tState === "none" && cam.x <= HX + 0.2){
     canvas.classList.toggle("point", !!pick(rayFrom(e.clientX, e.clientY)));
   }
 });
@@ -1303,6 +1666,7 @@ const endDrag = e => { if (drag && e.pointerId === drag.id){ canvas.classList.re
 canvas.addEventListener("pointerup", endDrag); canvas.addEventListener("pointercancel", endDrag);
 canvas.addEventListener("click", e => {
   if (!ready || (drag && drag.dist > 8)) return;
+  if (tState !== "none" || cam.x > HX + 0.2) return;
   const h = pick(rayFrom(e.clientX, e.clientY)); if (!h) return;
   if (h.type === "btn") runAction(h.a, pieces[h.i]);
   else { if (h.type === "text") readText(h.i); else walkTo(h.i); hintEl.classList.add("gone"); }
@@ -1321,9 +1685,10 @@ stick.addEventListener("pointerup", dropJoy); stick.addEventListener("pointercan
 root.addEventListener("contextmenu", e => e.preventDefault());
 window.addEventListener("keydown", e => {
   if (!isOpen || document.querySelector("dialog[open]")) return;
-  if (e.code === "Escape"){ leave(); return; }
+  if (e.code === "Escape"){ if (tState !== "none"){ theaterEscape(); return; } leave(); return; }
   if ((e.code === "Enter" || e.code === "Space") && act !== -1 && lay && btnAlpha > 0.5 && lay.btns.length){ e.preventDefault(); runAction(lay.btns[0].a, pieces[act]); return; }
-  if (/^(Key[WASDQE]|Arrow(Up|Down|Left|Right))$/.test(e.code)){ keys[e.code] = true; e.preventDefault(); }
+  if (theaterKey(e)) return;
+  if (/^(Key[WASDQE]|Arrow(Up|Down|Left|Right)|Shift(Left|Right))$/.test(e.code)){ keys[e.code] = true; e.preventDefault(); }
 });
 window.addEventListener("keyup", e => { keys[e.code] = false; });
 window.addEventListener("blur", () => { for (const k in keys) keys[k] = false; });
@@ -1366,6 +1731,7 @@ function leave(){
   if (!isOpen) return; isOpen = false; running = false;
   root.hidden = true; document.documentElement.style.overflow = ""; toast.hidden = true;
   videoStop(); act = -1; lay = null; textAlpha = 0;
+  theaterReset();
   for (const k in keys) keys[k] = false;
   if (location.hash === "#gallery"){ try { location.hash = ""; } catch (_){} }   // a clean link opens the room first next time
 }
@@ -1396,6 +1762,8 @@ window.gallery21 = {
     setTimeout(() => res(false), 3000);
   }); },
   tick(dt, paint){ step(dt); if (paint) render(); },
+  theater(){ return { state: tState, pick: tPick, light: lightLvl, eye: eyeY, filmReady, time: tVid ? tVid.currentTime : 0, paused: tVid ? tVid.paused : true, films: FILMS.length }; },
+  endFilm(){ if (tVid && tState === "playing"){ try { tVid.currentTime = Math.max(0, tVid.duration - 0.4); } catch (e){} } },
   state(){ return { ready, act, quality, film: vidFor, filmPlaying: vidReady, filmTime: vid ? vid.currentTime : 0, filmGaveUp: vidDead, typed: Math.floor(typed), total: lay ? lay.total : 0, btnAlpha, x: cam.x, z: cam.z, yaw: cam.yaw, pieces: pieces.length }; }
 };
 })();
