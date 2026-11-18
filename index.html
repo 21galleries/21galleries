@@ -304,9 +304,10 @@ if (location.hash && location.hash !== "#gallery") document.getElementById("g3d"
         <li><b>Photo and content days</b>A few hours of photos and short clips for your rollout or your socials.</li>
         <li><b>Editing</b>Cutting, colour and VHS-style effects on footage you already have.</li>
       </ul>
-      <form class="drop-form ask-form" id="askForm" name="inquiry" method="POST" action="/" data-netlify="true" netlify-honeypot="company">
-        <input type="hidden" name="form-name" value="inquiry">
-        <p class="drop-trap" hidden><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
+      <form class="drop-form ask-form" id="askForm" name="inquiry" method="POST" action="https://formspree.io/f/maeoovzq">
+        <input type="hidden" name="_subject" value="New project inquiry">
+        <input type="hidden" name="type" value="Project inquiry">
+        <p class="drop-trap" hidden><label>Leave this empty <input name="_gotcha" tabindex="-1" autocomplete="off"></label></p>
         <h3 class="ask-h">Tell me about your project</h3>
         <label class="drop-label" for="askName">Name or artist name</label>
         <input class="ask-in" id="askName" name="name" required autocomplete="name">
@@ -340,9 +341,10 @@ if (location.hash && location.hash !== "#gallery") document.getElementById("g3d"
       <h2>Next drop</h2>
       <p class="lead">New prints, in small numbered runs.</p>
       <p>Leave your email and you'll hear when the next one opens.</p>
-      <form class="drop-form" id="dropForm" name="drops" method="POST" action="/" data-netlify="true" netlify-honeypot="company">
-        <input type="hidden" name="form-name" value="drops">
-        <p class="drop-trap" hidden><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
+      <form class="drop-form" id="dropForm" name="drops" method="POST" action="https://formspree.io/f/maeoovzq">
+        <input type="hidden" name="_subject" value="New drop sign-up">
+        <input type="hidden" name="type" value="Drop alert sign-up">
+        <p class="drop-trap" hidden><label>Leave this empty <input name="_gotcha" tabindex="-1" autocomplete="off"></label></p>
         <label class="drop-label" for="dropEmail">Email</label>
         <div class="drop-row">
           <input id="dropEmail" type="email" name="email" required placeholder="you@email.com" autocomplete="email">
@@ -567,15 +569,14 @@ $("buyClose").addEventListener("click", () => buy.close());
 buy.addEventListener("click", e => { if (e.target === buy) buy.close(); });
 window.openPurchase = openPurchase;
 
-/* ---------- forms: drop alerts and project inquiries (Netlify Forms) ---------- */
+/* ---------- forms: drop alerts and project inquiries (sent by Formspree to 21galleriescontact@gmail.com) ---------- */
 function netlifyForm(form, msg, busy, done){
   if (!form) return;
   form.addEventListener("submit", async e => {
     e.preventDefault();
     const btn = form.querySelector("button[type=submit], button"); btn.disabled = true; msg.textContent = busy;
     try {
-      const r = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                                   body: new URLSearchParams(new FormData(form)).toString() });
+      const r = await fetch(form.action, { method: "POST", headers: { "Accept": "application/json" }, body: new FormData(form) });
       if (!r.ok) throw new Error(r.status);
       form.reset(); msg.textContent = done;
     } catch (err){
